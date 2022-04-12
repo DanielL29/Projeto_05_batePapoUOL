@@ -45,11 +45,11 @@ main {
     margin: 106px 0;
 }
 
-.message.in-out {
+.message.in-out-color {
     background-color: #DCDCDC;
 }
 
-.message.reserved {
+.message.reserved-color {
     background-color: #FFDEDE;
 }
 
@@ -174,3 +174,72 @@ footer .send-message ion-icon {
     border: none;
     cursor: pointer;
 }
+
+/* Sidebar Users */
+
+aside {
+    background: rgba(0, 0, 0, 0.6);
+    height: 100vh;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+    display: none;
+}
+
+aside > div {
+    background-color: #fff;
+    width: 69%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: 0 20px;
+}
+
+.sidebar-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 84px;
+    width: 100%;
+    text-align: center;
+}
+
+.sidebar-title h1 {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.all-user, .user, .public, .reserved {
+    display: flex;
+    align-items: center;
+
+    height: 36px;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+aside > div ion-icon {
+    font-size: 25px;
+    margin-right: 5px;
+    margin-top: -3px;
+}
+
+aside > div h2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 66px;
+    width: 100%;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+aside > div p, aside > div h3 {
+    flex: 1;
+}
+
