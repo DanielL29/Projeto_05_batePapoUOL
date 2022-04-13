@@ -36,13 +36,14 @@ function keepUserConnected() {
 // Get all messages
 function getMessages() {
     const promise = axios.get('https://mock-api.driven.com.br/api/v6/uol/messages')
-    
+
     promise.then(res => {
         document.querySelector('main').innerHTML = ''
+        document.querySelector('main').innerHTML ? document.querySelector('.loading-messages').classList.remove('hidden') : document.querySelector('.loading-messages').classList.add('hidden')
 
-        for(let i = 0; i < res.data.length; i++) {
+        for (let i = 0; i < res.data.length; i++) {
             let inOut = res.data[i].type === 'status' ? 'in-out-color' : ''
-            let reserved = res.data[i].type === 'private_message' ? 'reserved-color': ''
+            let reserved = res.data[i].type === 'private_message' ? 'reserved-color' : ''
             let typeMessage = res.data[i].type ? inOut : reserved
 
             document.querySelector('main').innerHTML += `
@@ -54,5 +55,9 @@ function getMessages() {
                 </div>
             `
         }
+        // Scroll to Last Message
+        let screenHeight = '' + window.innerHeight / 8
+        document.querySelector('main').lastElementChild.scrollIntoView(false)
+        window.scrollBy(0, screenHeight)
     })
 }

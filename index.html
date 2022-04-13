@@ -31,36 +31,37 @@
         </div>
     </div>
 
+    <!-- Messages Loading -->
+    <div class="loading-messages">
+        <img src="images/loading.gif" alt="loading">
+        <h3>Carregando mensagens...</h3>
+    </div>
+
     <!-- Sidebar Users -->
 
     <aside class="hidden">
+        <div></div>
         <div>
             <div class="sidebar-title">
                 <h1>Escolha um contato para enviar mensagem:</h1>
             </div>
-            <div class="users-connected">
-                <div class="all-user">
-                    <ion-icon name="people"></ion-icon>
-                    <p>Todos</p>
-                    <img src="images/check.png" alt="check">
-                </div>
-                <div class="user">
-                    <ion-icon name="person-circle"></ion-icon>
-                    <p>João</p>
-                    <img src="images/check.png" alt="check">
-                </div>
+            <div class="all-user">
+                <ion-icon name="people"></ion-icon>
+                <p>Todos</p>
+                <img class="hidden" src="images/check.png" alt="check">
             </div>
+            <div class="users-connected"></div>
             <h2>Escolha a visibilidade:</h2>
             <div class="visibility">
                 <div class="public">
                     <ion-icon name="lock-open"></ion-icon>
                     <h3>Público</h3>
-                    <img src="images/check.png" alt="check">
+                    <img class="hidden" src="images/check.png" alt="check">
                 </div>
                 <div class="reserved">
                     <ion-icon name="lock-closed"></ion-icon>
                     <h3>Reservadamente</h3>
-                    <img src="images/check.png" alt="check">
+                    <img class="hidden" src="images/check.png" alt="check">
                 </div>
             </div>
         </div>
@@ -71,33 +72,17 @@
         <div class="logo">
             <img src="images/logo.png" alt="logo UOL header">
         </div>
-        <div class="users">
+        <div class="users" onclick="toggleUserSidebar()">
             <ion-icon name="people"></ion-icon>
         </div>
     </header>
-    <main>
-        <!-- <div class="message in-out-color">
-            <p class="text">
-                <span class="hour">(09:21:45)</span>
-                <strong>João</strong> para <strong>Todos</strong>: Bom dia</strong>
-            </p>
-        </div>
-        <div class="message">
-            <p class="text">
-                <span class="hour">(09:21:45)</span>
-                <strong>João</strong> para <strong>Todos</strong>: Bom dia</strong>
-            </p>
-        </div>
-        <div class="message reserved-color">
-            <p class="text">
-                <span class="hour">(09:21:45)</span>
-                <strong>João</strong> reservadamente para <strong>Todos</strong>: Oi gatinha quer tc?</strong>
-            </p>
-        </div> -->
-    </main>
+    <main></main>
     <footer>
-        <input type="text" placeholder="Escreva aqui...">
-        <div class="send-message">
+        <div>
+            <input type="text" placeholder="Escreva aqui...">
+            <div class="toMessage"></div>
+        </div>
+        <div class="send-message" onclick="sendMessage()">
             <ion-icon name="paper-plane-outline"></ion-icon>
         </div>
     </footer>

@@ -97,6 +97,11 @@ footer input {
     font-weight: 400;
     font-style: italic;
     color: #000;
+    width: 100%;
+}
+
+footer input:focus {
+    font-style: normal;
 }
 
 footer input::placeholder {
@@ -105,6 +110,11 @@ footer input::placeholder {
 
 footer .send-message ion-icon {
     font-size: 26px;
+    cursor: pointer;
+}
+
+footer .send-message ion-icon:hover {
+    color: #555;
 }
 
 /* Signin Screen */
@@ -149,18 +159,22 @@ footer .send-message ion-icon {
     text-align: center;
 }
 
-.loading {
+.loading, .loading-messages {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-.signin-container .loading img {
+.signin-container .loading img, .loading-messages img {
     width: 150px;
 }
 
-.loading > h3 {
+.loading-messages {
+    height: 100vh;
+}
+
+.loading h3, .loading-messages h3 {
     font-size: 18px;
 }
 
@@ -196,7 +210,6 @@ footer .send-message ion-icon {
 /* Sidebar Users */
 
 aside {
-    background: rgba(0, 0, 0, 0.6);
     height: 100vh;
     width: 100%;
     position: fixed;
@@ -205,7 +218,13 @@ aside {
     z-index: 1;
 }
 
-aside > div {
+aside > div:first-child {
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 31%;
+    height: 100%;
+}
+
+aside > div:last-child {
     background-color: #fff;
     width: 69%;
     position: absolute;
@@ -213,6 +232,12 @@ aside > div {
     top: 0;
     bottom: 0;
     padding: 0 20px;
+    transition: all 5s ease-in-out;
+}
+
+aside > div.active {
+    width: 100%;
+    transition: all 5s ease-in-out;
 }
 
 .sidebar-title {
@@ -230,6 +255,16 @@ aside > div {
     font-weight: bold;
 }
 
+.users-connected {
+    height: 200px;
+    overflow-y: scroll;
+    box-shadow: 3px 0 1.5px rgba(0, 0, 0, 0.2);
+}
+
+.users-connected::-webkit-scrollbar {
+    display: none;
+}
+
 .all-user, .user, .public, .reserved {
     display: flex;
     align-items: center;
@@ -237,6 +272,7 @@ aside > div {
     height: 36px;
     font-size: 16px;
     font-weight: 400;
+    cursor: pointer;
 }
 
 aside > div ion-icon {
