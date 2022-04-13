@@ -16,6 +16,7 @@ function getInChat() {
 
     setInterval(keepUserConnected, 5000)
     setInterval(getMessages, 3000)
+    setInterval(getAllUsersConnected, 3000)
 }
 
 function validateName(err) {
@@ -60,4 +61,27 @@ function getMessages() {
         document.querySelector('main').lastElementChild.scrollIntoView(false)
         window.scrollBy(0, screenHeight)
     })
+}
+
+// Send Message
+function sendMessage() {
+    const nameInput = document.querySelector('.name-section input').value
+    let messageInput = document.querySelector('footer input')
+
+    let messageValues = {
+        from: nameInput,
+        to: 'Todos',
+        text: messageInput.value,
+        type: 'message'
+    }
+
+    const promise = axios.post('https://mock-api.driven.com.br/api/v6/uol/messages', messageValues)
+
+    promise.then(res => res.data)
+    promise.catch(err => {
+        alert(`${err.response.status} Usuário saiu da sala`)
+        window.location.reload()
+    })
+
+    messageInput.value = ''
 }
