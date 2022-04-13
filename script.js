@@ -1,4 +1,4 @@
-// Signin on Chat
+// Signin on chat
 function signin() {
     const nameInput = document.querySelector('.name-section input').value
     const promise = axios.post('https://mock-api.driven.com.br/api/v6/uol/participants', { name: nameInput })
@@ -15,6 +15,7 @@ function getInChat() {
     document.querySelector('.signin').classList.add('hidden')
 
     setInterval(keepUserConnected, 5000)
+    setInterval(getMessages, 3000)
 }
 
 function validateName(err) {
@@ -24,10 +25,34 @@ function validateName(err) {
     document.querySelector('.name-section input').value = ''
 }
 
-// Validating User on Server
+// Validating user on server
 function keepUserConnected() {
     const nameInput = document.querySelector('.name-section input').value
     const promise = axios.post('https://mock-api.driven.com.br/api/v6/uol/status', { name: nameInput })
 
     promise.then(res => res.data)
+}
+
+// Get all messages
+function getMessages() {
+    const promise = axios.get('https://mock-api.driven.com.br/api/v6/uol/messages')
+    
+    promise.then(res => {
+        document.querySelector('main').innerHTML = ''
+
+        for(let i = 0; i < res.data.length; i++) {
+            let inOut = res.data[i].type === 'status' ? 'in-out-color' : ''
+            let reserved = res.data[i].type === 'private_message' ? 'reserved-color': ''
+            let typeMessage = res.data[i].type ? inOut : reserved
+
+            document.querySelector('main').innerHTML += `
+                <div class="message ${typeMessage}">
+                    <p class="text">
+                        <span class="hour">${res.data[i].time}</span>
+                        <strong>${res.data[i].from}</strong> para <strong>${res.data[i].to}</strong>: ${res.data[i].text}
+                    </p>
+                </div>
+            `
+        }
+    })
 }
