@@ -85,3 +85,33 @@ function sendMessage() {
 
     messageInput.value = ''
 }
+
+// Get All Users Connected
+function getAllUsersConnected() {
+    const promise = axios.get('https://mock-api.driven.com.br/api/v6/uol/participants')
+
+    promise.then(res => {
+        document.querySelector('.users-connected').innerHTML = ''
+
+        for(let i = 0; i < res.data.length; i++) {
+            document.querySelector('.users-connected').innerHTML += `
+                <div class="user" onclick="selectUser()">
+                    <ion-icon name="person-circle"></ion-icon>
+                    <p>${res.data[i].name}</p>
+                    <img class="hidden" src="images/check.png" alt="check">
+                </div>
+            `
+        }
+    })
+}
+
+// Toggle Users Connected Sidebar
+function toggleUserSidebar() {
+    document.querySelector('aside').classList.remove('hidden') 
+    document.querySelector('aside > div').classList.add('active')
+
+    document.querySelector('aside > div:first-child').onclick = () => {
+        document.querySelector('aside > div').classList.remove('active')
+        document.querySelector('aside').classList.add('hidden') 
+    }
+}
