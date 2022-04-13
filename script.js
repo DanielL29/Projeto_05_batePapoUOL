@@ -24,3 +24,10 @@ function validateName(err) {
     document.querySelector('.name-section input').value = ''
 }
 
+// Validating User on Server
+function keepUserConnected() {
+    const nameInput = document.querySelector('.name-section input').value
+    const promise = axios.post('https://mock-api.driven.com.br/api/v6/uol/status', { name: nameInput })
+
+    promise.then(res => res.data)
+}
