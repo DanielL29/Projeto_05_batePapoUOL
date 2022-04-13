@@ -120,15 +120,12 @@ footer .send-message ion-icon {
     top: 0;
     bottom: 0;
     z-index: 1;
-    display: none;
 }
 
 .signin-container {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     align-items: center;
-    height: 300px;
     width: 261px;
     margin-top: 72px;
 }
@@ -136,15 +133,35 @@ footer .send-message ion-icon {
 .name-section {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     align-items: center;
-
-    height: 114px;
 }
 
-.signin-container img {
+.signin-container > img {
     height: 92px;
     width: 130px;
+    margin-bottom: 94px;
+}
+
+.name-section .name-error {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.loading {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.signin-container .loading img {
+    width: 150px;
+}
+
+.loading > h3 {
+    font-size: 18px;
 }
 
 .signin-container input {
@@ -157,9 +174,10 @@ footer .send-message ion-icon {
     border-radius: 4px;
     color: #AEAEAE;
     text-align: center;
+    margin-bottom: 15px;
 }
 
-.singin-container input::placeholder {
+.name-section input::placeholder {
     color: #AEAEAE;
 }
 
@@ -185,7 +203,6 @@ aside {
     top: 0;
     bottom: 0;
     z-index: 1;
-    display: none;
 }
 
 aside > div {
@@ -241,5 +258,9 @@ aside > div h2 {
 
 aside > div p, aside > div h3 {
     flex: 1;
+}
+
+.hidden {
+    display: none;
 }
 
