@@ -39,6 +39,7 @@ header {
 
 .users ion-icon {
     font-size: 42px;
+    cursor: pointer;
 }
 
 main {
@@ -59,6 +60,7 @@ main {
 
     background-color: #fff;
     width: 100%;
+    min-height: 40px;
     padding: 0 8px;
     margin-bottom: 4px;
     font-size: 14px;
@@ -68,6 +70,8 @@ main {
 
 .message .text {
     padding: 10px 2px;
+    width: 100%;
+    word-wrap: break-word;
 }
 
 .message .hour {
@@ -98,6 +102,13 @@ footer input {
     font-style: italic;
     color: #000;
     width: 100%;
+}
+
+.to-message h4 {
+    color: #505050;
+    font-size: 14px;
+    font-weight: 300;
+    margin-top: 10px;
 }
 
 footer input:focus {
@@ -159,7 +170,7 @@ footer .send-message ion-icon:hover {
     text-align: center;
 }
 
-.loading, .loading-messages {
+.loading, .loading-messages, .loading-users {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -172,6 +183,10 @@ footer .send-message ion-icon:hover {
 
 .loading-messages {
     height: 100vh;
+}
+
+.loading-users img {
+    height: 100px;
 }
 
 .loading h3, .loading-messages h3 {
@@ -210,34 +225,48 @@ footer .send-message ion-icon:hover {
 /* Sidebar Users */
 
 aside {
-    height: 100vh;
-    width: 100%;
+    display: flex;
+    height: 100%;
+    width: 0;
     position: fixed;
     top: 0;
     bottom: 0;
+    right: 0;
+    z-index: 2;
+    transition: all 500ms ease-in-out;
+}
+
+.black-screen {
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    position: fixed;
     z-index: 1;
 }
 
-aside > div:first-child {
-    background-color: rgba(0, 0, 0, 0.6);
-    width: 31%;
-    height: 100%;
+aside > div {
+    background-color: #fff;
+    padding: 0 20px;
+    transition: all 500ms ease-in-out;
 }
 
-aside > div:last-child {
-    background-color: #fff;
-    width: 69%;
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    padding: 0 20px;
-    transition: all 5s ease-in-out;
+aside.active {
+    width: 259px;
+    transition: all 500ms ease-in-out;
+}
+
+.user img, .all-user img, .public img, .reserved img {
+    display: none;
+}
+
+.user.selected img, .all-user.selected img, .public.status img, .reserved.status img {
+    display: initial;
 }
 
 aside > div.active {
     width: 100%;
-    transition: all 5s ease-in-out;
 }
 
 .sidebar-title {
@@ -258,7 +287,8 @@ aside > div.active {
 .users-connected {
     height: 200px;
     overflow-y: scroll;
-    box-shadow: 3px 0 1.5px rgba(0, 0, 0, 0.2);
+    border-top: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
 }
 
 .users-connected::-webkit-scrollbar {
@@ -299,4 +329,3 @@ aside > div p, aside > div h3 {
 .hidden {
     display: none;
 }
-

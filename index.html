@@ -39,29 +39,34 @@
 
     <!-- Sidebar Users -->
 
-    <aside class="hidden">
-        <div></div>
+    <div class="black-screen hidden"></div>
+    <aside>
         <div>
             <div class="sidebar-title">
                 <h1>Escolha um contato para enviar mensagem:</h1>
             </div>
-            <div class="all-user">
+            <div class="all-user" onclick="selectUser(this)">
                 <ion-icon name="people"></ion-icon>
                 <p>Todos</p>
-                <img class="hidden" src="images/check.png" alt="check">
+                <img src="images/check.png" alt="check">
             </div>
-            <div class="users-connected"></div>
+            <div class="users-connected">
+                <div class="loading-users">
+                    <img src="images/loading.gif" alt="loading">
+                    <h3>Carregando usuários...</h3>
+                </div>
+            </div>
             <h2>Escolha a visibilidade:</h2>
             <div class="visibility">
-                <div class="public">
+                <div class="public" onclick="selectVisibility(this)">
                     <ion-icon name="lock-open"></ion-icon>
                     <h3>Público</h3>
-                    <img class="hidden" src="images/check.png" alt="check">
+                    <img src="images/check.png" alt="check">
                 </div>
-                <div class="reserved">
+                <div class="reserved" onclick="selectVisibility(this)">
                     <ion-icon name="lock-closed"></ion-icon>
                     <h3>Reservadamente</h3>
-                    <img class="hidden" src="images/check.png" alt="check">
+                    <img src="images/check.png" alt="check">
                 </div>
             </div>
         </div>
@@ -80,7 +85,9 @@
     <footer>
         <div>
             <input type="text" placeholder="Escreva aqui...">
-            <div class="toMessage"></div>
+            <div class="to-message">
+                <h4>Enviando para Todos</h4>
+            </div>
         </div>
         <div class="send-message" onclick="sendMessage()">
             <ion-icon name="paper-plane-outline"></ion-icon>
