@@ -104,6 +104,10 @@ footer input {
     width: 100%;
 }
 
+footer > div:first-child {
+    flex: 1;
+}
+
 .to-message h4 {
     color: #505050;
     font-size: 14px;

@@ -1,5 +1,6 @@
-let userToSend;
-let messageStatus;
+let userToSend = 'Todos';
+let messageStatus = 'Público';
+let lastMessage;
 console.log(userToSend)
 
 // Signin on chat
@@ -20,7 +21,7 @@ function getInChat() {
 
     setInterval(keepUserConnected, 5000);
     setInterval(getMessages, 3000);
-    getAllUsersConnected();
+    setInterval(getAllUsersConnected, 10000);
 }
 
 function validateName(err) {
@@ -42,43 +43,62 @@ function keepUserConnected() {
 function getMessages() {
     const promise = axios.get("https://mock-api.driven.com.br/api/v6/uol/messages");
     const nameInput = document.querySelector(".name-section input").value;
+    let typeMessage;
+    let getHour;
+    let hourFormatted;
+    let dataFormatted;
 
     promise.then((res) => {
         document.querySelector("main").innerHTML = "";
-        document.querySelector("main").innerHTML ? document.querySelector(".loading-messages").classList.remove("hidden") : document.querySelector(".loading-messages").classList.add("hidden");
 
-        let typeMessage;
+        if (document.querySelector("main").innerHTML) document.querySelector(".loading-messages").classList.remove("hidden");
+        else document.querySelector(".loading-messages").classList.add("hidden");
 
         for (let i = 0; i < res.data.length; i++) {
-            if (res.data[i].type === 'status') typeMessage = 'in-out-color'
-            else if (res.data[i].type === 'message') typeMessage = ''
+            if (res.data[i].type === 'status') typeMessage = 'in-out-color';
+            else if (res.data[i].type === 'message') typeMessage = '';
+
+            getHour = res.data[i].time.split(':')[0];
+            hourFormatted = Number(getHour - 3);
+
+            if(hourFormatted <= 0) hourFormatted = (Number(getHour) + 12).toString();
+
+            if(hourFormatted < 10) hourFormatted = `0${hourFormatted}`;
+            else hourFormatted = hourFormatted.toString();
+
+            dataFormatted = res.data[i].time.replace(getHour, hourFormatted);
 
             if (res.data[i].type === "private_message") {
-                if(res.data[i].to === nameInput || res.data[i].from === nameInput) {
+                if (res.data[i].to === nameInput || res.data[i].from === nameInput) {
                     document.querySelector("main").innerHTML += `
                         <div class="message reserved-color">
                             <p class="text">
-                                <span class="hour">(${res.data[i].time})</span>
+                                <span class="hour">(${dataFormatted})</span>
                                 <strong>${res.data[i].from}</strong> reservadamente para <strong>${res.data[i].to}</strong>: ${res.data[i].text}
                             </p>
                         </div>
                     `;
-                } else document.querySelector("main").innerHTML += ''
+                }
             } else {
                 document.querySelector("main").innerHTML += `
                     <div class="message ${typeMessage}">
                         <p class="text">
-                            <span class="hour">(${res.data[i].time})</span>
+                            <span class="hour">(${dataFormatted})</span>
                             <strong>${res.data[i].from}</strong> para <strong>${res.data[i].to}</strong>: ${res.data[i].text}
                         </p>
                     </div>
                 `;
             }
+            /* Scroll to Last Message
+            // lastMessage = document.querySelector('.message:last-child').innerHTML.split(': ')[1].split('\n')[0]
+
+            // if (lastMessage !== res.data[res.data.length - 1].text) {
+            //     console.log(`${document.querySelector('.message:last-child').innerHTML.split(': ')[1].split('\n')[0]} - ${res.data[res.data.length - 1].text}`)
+            //     let screenHeight = "" + window.innerHeight / 8;
+            //     document.querySelector("main").scrollIntoView(false);
+            //     window.scrollBy(0, screenHeight);
+            } */
         }
-        // Scroll to Last Message
-        let screenHeight = "" + window.innerHeight / 8;
-        document.querySelector("main").lastElementChild.scrollIntoView(false);
-        window.scrollBy(0, screenHeight);
     });
 }
 
@@ -93,7 +113,7 @@ function sendMessage() {
         if (messageStatus === "Público") type = "message";
         else if (messageStatus === "Reservadamente") type = "private_message";
     } else {
-        type = "message"
+        type = "message";
     }
 
     let messageValues = {
@@ -117,13 +137,17 @@ function sendMessage() {
 // Get All Users Connected
 function getAllUsersConnected() {
     const promise = axios.get("https://mock-api.driven.com.br/api/v6/uol/participants");
+    let getUserStillActive = '';
 
     promise.then((res) => {
         document.querySelector(".users-connected").innerHTML = "";
 
         for (let i = 0; i < res.data.length; i++) {
+            if (userToSend === res.data[i].name) getUserStillActive = 'selected';
+            else getUserStillActive = '';
+
             document.querySelector(".users-connected").innerHTML += `
-                <div class="user" onclick="selectUser(this)">
+                <div class="user ${getUserStillActive}" onclick="selectUser(this)">
                     <ion-icon name="person-circle"></ion-icon>
                     <p>${res.data[i].name}</p>
                     <img src="images/check.png" alt="check">
@@ -147,7 +171,7 @@ function toggleUserSidebar() {
 // Select User or "Todos"
 function selectUser(user) {
     const selected = document.querySelector(".selected");
-    let toUser = document.querySelector('.to-message h4')
+    let toUser = document.querySelector('.to-message h4');
 
     if (selected !== null) {
         selected.classList.remove("selected");
@@ -156,7 +180,7 @@ function selectUser(user) {
 
     if (user.classList.contains("selected")) {
         userToSend = user.querySelector('p').innerHTML;
-        toUser.innerHTML = `Enviando para ${userToSend} (Público)`
+        toUser.innerHTML = `Enviando para ${userToSend} (Público)`;
     }
     console.log(userToSend);
 }
@@ -164,7 +188,7 @@ function selectUser(user) {
 // Select Visibility Private or Public
 function selectVisibility(visible) {
     const status = document.querySelector(".status");
-    let toUser = document.querySelector('.to-message h4')
+    let toUser = document.querySelector('.to-message h4');
 
     if (status !== null) {
         status.classList.remove("status");
@@ -173,7 +197,7 @@ function selectVisibility(visible) {
 
     if (visible.classList.contains("status")) {
         messageStatus = visible.querySelector('h3').innerHTML;
-        toUser.innerHTML = `Enviando para ${userToSend} (${messageStatus})`
+        toUser.innerHTML = `Enviando para ${userToSend} (${messageStatus})`;
     }
     console.log(messageStatus);
 }
