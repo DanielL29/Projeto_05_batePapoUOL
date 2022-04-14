@@ -1,11 +1,12 @@
 let userToSend = 'Todos';
 let messageStatus = 'Público';
 let lastMessage;
-console.log(userToSend)
+console.log(userToSend);
 
 // Signin on chat
 function signin() {
     const nameInput = document.querySelector(".name-section input").value;
+    console.log(nameInput);
     const promise = axios.post("https://mock-api.driven.com.br/api/v6/uol/participants", { name: nameInput });
 
     document.querySelector(".name-section").classList.add("hidden");
@@ -105,6 +106,7 @@ function getMessages() {
 // Send Message
 function sendMessage() {
     const nameInput = document.querySelector(".name-section input").value;
+    console.log(nameInput);
     let messageInput = document.querySelector("footer input");
 
     let to = userToSend !== undefined ? userToSend : "Todos";
@@ -201,3 +203,19 @@ function selectVisibility(visible) {
     }
     console.log(messageStatus);
 }
+
+// Send Input on Enter
+function sendInputOnEnter() {
+    document.querySelector('footer input').addEventListener('keydown', (e) => {
+        if(e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    document.querySelector('.signin-container input').addEventListener('keydown', (e) => {
+        if(e.key === 'Enter') {
+            signin();
+        }
+    });
+}
+sendInputOnEnter();
