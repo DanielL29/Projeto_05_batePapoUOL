@@ -186,7 +186,7 @@ footer .send-message ion-icon:hover {
 }
 
 .loading-messages {
-    height: 100vh;
+    height: calc(100vh - 150px);
 }
 
 .loading-users img {
