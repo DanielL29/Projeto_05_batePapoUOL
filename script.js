@@ -1,12 +1,12 @@
 let userToSend = 'Todos';
 let messageStatus = 'Público';
-let lastMessage;
-console.log(userToSend);
+let lastMessage, typeMessage, getHour, hourFormatted, dataFormatted;
+let count = 0;
+let prevMess, curMess;
 
 // Signin on chat
 function signin() {
     const nameInput = document.querySelector(".name-section input").value;
-    console.log(nameInput);
     const promise = axios.post("https://mock-api.driven.com.br/api/v6/uol/participants", { name: nameInput });
 
     document.querySelector(".name-section").classList.add("hidden");
@@ -40,14 +40,10 @@ function keepUserConnected() {
     promise.then((res) => res.data);
 }
 
-// Get all messages
+// Get all messages - refatorar
 function getMessages() {
     const promise = axios.get("https://mock-api.driven.com.br/api/v6/uol/messages");
     const nameInput = document.querySelector(".name-section input").value;
-    let typeMessage;
-    let getHour;
-    let hourFormatted;
-    let dataFormatted;
 
     promise.then((res) => {
         document.querySelector("main").innerHTML = "";
@@ -62,9 +58,9 @@ function getMessages() {
             getHour = res.data[i].time.split(':')[0];
             hourFormatted = Number(getHour - 3);
 
-            if(hourFormatted <= 0) hourFormatted = (Number(getHour) + 12).toString();
+            if (hourFormatted <= 0) hourFormatted = (hourFormatted + 12).toString();
 
-            if(hourFormatted < 10) hourFormatted = `0${hourFormatted}`;
+            if (hourFormatted < 10) hourFormatted = `0${hourFormatted}`;
             else hourFormatted = hourFormatted.toString();
 
             dataFormatted = res.data[i].time.replace(getHour, hourFormatted);
@@ -90,23 +86,38 @@ function getMessages() {
                     </div>
                 `;
             }
-            /* Scroll to Last Message
-            // lastMessage = document.querySelector('.message:last-child').innerHTML.split(': ')[1].split('\n')[0]
+        }
+        //  Scroll to Last Message
+        let length = res.data.length - 1
 
-            // if (lastMessage !== res.data[res.data.length - 1].text) {
-            //     console.log(`${document.querySelector('.message:last-child').innerHTML.split(': ')[1].split('\n')[0]} - ${res.data[res.data.length - 1].text}`)
-            //     let screenHeight = "" + window.innerHeight / 8;
-            //     document.querySelector("main").scrollIntoView(false);
-            //     window.scrollBy(0, screenHeight);
-            } */
+        if (count === 0) {
+            prevMess = res.data[length].time
+            if(curMess !== null) {
+                if (prevMess !== curMess) {
+                    let screenHeight = "" + window.innerHeight / 8;
+                    document.querySelector(".message:last-child").scrollIntoView(false);
+                    window.scrollBy(0, screenHeight);
+                }
+            }
+            count++
+        } else if (count === 1) {
+            curMess = res.data[length].time
+            count++
+            if (prevMess === curMess) {
+                count = 0
+            } else {
+                let screenHeight = "" + window.innerHeight / 8;
+                document.querySelector(".message:last-child").scrollIntoView(false);
+                window.scrollBy(0, screenHeight);
+                count = 0
+            }
         }
     });
 }
 
-// Send Message
+// Send Message - refatorar
 function sendMessage() {
     const nameInput = document.querySelector(".name-section input").value;
-    console.log(nameInput);
     let messageInput = document.querySelector("footer input");
 
     let to = userToSend !== undefined ? userToSend : "Todos";
@@ -136,7 +147,7 @@ function sendMessage() {
     messageInput.value = "";
 }
 
-// Get All Users Connected
+// Get All Users Connected - talvez refatorar
 function getAllUsersConnected() {
     const promise = axios.get("https://mock-api.driven.com.br/api/v6/uol/participants");
     let getUserStillActive = '';
@@ -175,16 +186,13 @@ function selectUser(user) {
     const selected = document.querySelector(".selected");
     let toUser = document.querySelector('.to-message h4');
 
-    if (selected !== null) {
-        selected.classList.remove("selected");
-    }
+    if (selected !== null) selected.classList.remove("selected");
     user.classList.add("selected");
 
     if (user.classList.contains("selected")) {
         userToSend = user.querySelector('p').innerHTML;
         toUser.innerHTML = `Enviando para ${userToSend} (Público)`;
     }
-    console.log(userToSend);
 }
 
 // Select Visibility Private or Public
@@ -192,30 +200,18 @@ function selectVisibility(visible) {
     const status = document.querySelector(".status");
     let toUser = document.querySelector('.to-message h4');
 
-    if (status !== null) {
-        status.classList.remove("status");
-    }
+    if (status !== null) status.classList.remove("status");
     visible.classList.add("status");
 
     if (visible.classList.contains("status")) {
         messageStatus = visible.querySelector('h3').innerHTML;
         toUser.innerHTML = `Enviando para ${userToSend} (${messageStatus})`;
     }
-    console.log(messageStatus);
 }
 
 // Send Input on Enter
 function sendInputOnEnter() {
-    document.querySelector('footer input').addEventListener('keydown', (e) => {
-        if(e.key === 'Enter') {
-            sendMessage();
-        }
-    });
-
-    document.querySelector('.signin-container input').addEventListener('keydown', (e) => {
-        if(e.key === 'Enter') {
-            signin();
-        }
-    });
+    document.querySelector('footer input').addEventListener('keydown', e => e.key === 'Enter' ? sendMessage() : false);
+    document.querySelector('.signin-container input').addEventListener('keydown', e => e.key === 'Enter' ? signin() : false);
 }
 sendInputOnEnter();
