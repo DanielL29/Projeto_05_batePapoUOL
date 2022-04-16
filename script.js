@@ -1,8 +1,8 @@
 let userToSend = 'Todos';
 let messageStatus = 'Público';
-let lastMessage, typeMessage, getHour, hourFormatted, dataFormatted;
+let typeMessage, dataFormatted, type, to, prevMess, curMess, getHour, hourFormatted;
 let count = 0;
-let prevMess, curMess;
+let getUserStillActive = '';
 
 // Signin on chat
 function signin() {
@@ -32,6 +32,14 @@ function validateName(err) {
     document.querySelector(".name-section input").value = "";
 }
 
+// Reset and load messages
+function resetAndLoadMessages() {
+    document.querySelector("main").innerHTML = "";
+
+    if (document.querySelector("main").innerHTML) document.querySelector(".loading-messages").classList.remove("hidden");
+    else document.querySelector(".loading-messages").classList.add("hidden");
+}
+
 // Validating user on server
 function keepUserConnected() {
     const nameInput = document.querySelector(".name-section input").value;
@@ -40,94 +48,113 @@ function keepUserConnected() {
     promise.then((res) => res.data);
 }
 
-// Get all messages - refatorar
-function getMessages() {
-    const promise = axios.get("https://mock-api.driven.com.br/api/v6/uol/messages");
+// Message color
+function messageColorByType(type) {
+    if (type === 'status') typeMessage = 'in-out-color';
+    else if (type === 'message') typeMessage = '';
+}
+
+// Get hour formatted from server to - 3 hours
+function getHourFormatted(hour) {
+    getHour = hour.split(':')[0];
+    hourFormatted = Number(getHour - 3);
+
+    if (hourFormatted <= 0) hourFormatted = (hourFormatted + 12).toString();
+
+    if (hourFormatted < 10) hourFormatted = `0${hourFormatted}`;
+    else hourFormatted = hourFormatted.toString();
+
+    dataFormatted = hour.replace(getHour, hourFormatted);
+}
+
+// Load messages HTML
+function loadMessages(to, from, type, text) {
     const nameInput = document.querySelector(".name-section input").value;
 
-    promise.then((res) => {
-        document.querySelector("main").innerHTML = "";
-
-        if (document.querySelector("main").innerHTML) document.querySelector(".loading-messages").classList.remove("hidden");
-        else document.querySelector(".loading-messages").classList.add("hidden");
-
-        for (let i = 0; i < res.data.length; i++) {
-            if (res.data[i].type === 'status') typeMessage = 'in-out-color';
-            else if (res.data[i].type === 'message') typeMessage = '';
-
-            getHour = res.data[i].time.split(':')[0];
-            hourFormatted = Number(getHour - 3);
-
-            if (hourFormatted <= 0) hourFormatted = (hourFormatted + 12).toString();
-
-            if (hourFormatted < 10) hourFormatted = `0${hourFormatted}`;
-            else hourFormatted = hourFormatted.toString();
-
-            dataFormatted = res.data[i].time.replace(getHour, hourFormatted);
-
-            if (res.data[i].type === "private_message") {
-                if (res.data[i].to === nameInput || res.data[i].from === nameInput) {
-                    document.querySelector("main").innerHTML += `
-                        <div class="message reserved-color">
-                            <p class="text">
-                                <span class="hour">(${dataFormatted})</span>
-                                <strong>${res.data[i].from}</strong> reservadamente para <strong>${res.data[i].to}</strong>: ${res.data[i].text}
-                            </p>
-                        </div>
-                    `;
-                }
-            } else {
-                document.querySelector("main").innerHTML += `
-                    <div class="message ${typeMessage}">
-                        <p class="text">
-                            <span class="hour">(${dataFormatted})</span>
-                            <strong>${res.data[i].from}</strong> para <strong>${res.data[i].to}</strong>: ${res.data[i].text}
-                        </p>
-                    </div>
-                `;
-            }
+    if (type === "private_message") {
+        if (to === nameInput || from === nameInput) {
+            document.querySelector("main").innerHTML += `
+                <div class="message reserved-color">
+                    <p class="text">
+                        <span class="hour">(${dataFormatted})</span>
+                        <strong>${from}</strong> reservadamente para <strong>${to}</strong>: ${text}
+                    </p>
+                </div>
+            `;
         }
-        //  Scroll to Last Message
-        let length = res.data.length - 1
+    } else {
+        document.querySelector("main").innerHTML += `
+            <div class="message ${typeMessage}">
+                <p class="text">
+                    <span class="hour">(${dataFormatted})</span>
+                    <strong>${from}</strong> para <strong>${to}</strong>: ${text}
+                </p>
+            </div>
+        `;
+    }
+}
 
-        if (count === 0) {
-            prevMess = res.data[length].time
-            if(curMess !== null) {
-                if (prevMess !== curMess) {
-                    let screenHeight = "" + window.innerHeight / 8;
-                    document.querySelector(".message:last-child").scrollIntoView(false);
-                    window.scrollBy(0, screenHeight);
-                }
-            }
-            count++
-        } else if (count === 1) {
-            curMess = res.data[length].time
-            count++
-            if (prevMess === curMess) {
-                count = 0
-            } else {
+// Scroll to every new message
+function scrollToEveryNewMessage(message) {
+    let length = message.length - 1;
+
+    if (count === 0) {
+        prevMess = message[length].time;
+        if (curMess !== null) {
+            if (prevMess !== curMess) {
                 let screenHeight = "" + window.innerHeight / 8;
                 document.querySelector(".message:last-child").scrollIntoView(false);
                 window.scrollBy(0, screenHeight);
-                count = 0
             }
         }
+        count++;
+    } else if (count === 1) {
+        curMess = message[length].time;
+        count++;
+        if (prevMess === curMess) count = 0;
+        else {
+            let screenHeight = "" + window.innerHeight / 8;
+            document.querySelector(".message:last-child").scrollIntoView(false);
+            window.scrollBy(0, screenHeight);
+            count = 0;
+        }
+    }
+}
+
+// Get all messages
+function getMessages() {
+    const promise = axios.get("https://mock-api.driven.com.br/api/v6/uol/messages");
+
+    promise.then((res) => {
+        resetAndLoadMessages();
+
+        for (let i = 0; i < res.data.length; i++) {
+            messageColorByType(res.data[i].type);
+            getHourFormatted(res.data[i].time);
+            loadMessages(res.data[i].to, res.data[i].from, res.data[i].type, res.data[i].text);
+        }
+        scrollToEveryNewMessage(res.data);
     });
 }
 
-// Send Message - refatorar
-function sendMessage() {
-    const nameInput = document.querySelector(".name-section input").value;
-    let messageInput = document.querySelector("footer input");
+// Get user selected and status selected
+function getUserAndStatus() {
+    to = userToSend !== undefined ? userToSend : "Todos";
 
-    let to = userToSend !== undefined ? userToSend : "Todos";
-    let type;
     if (messageStatus !== undefined) {
         if (messageStatus === "Público") type = "message";
         else if (messageStatus === "Reservadamente") type = "private_message";
     } else {
         type = "message";
     }
+}
+
+// Send Message
+function sendMessage() {
+    const nameInput = document.querySelector(".name-section input").value;
+    let messageInput = document.querySelector("footer input");
+
+    getUserAndStatus();
 
     let messageValues = {
         from: nameInput,
@@ -147,25 +174,29 @@ function sendMessage() {
     messageInput.value = "";
 }
 
-// Get All Users Connected - talvez refatorar
+// Load users HTML
+function loadUsers(name) {
+    if (userToSend === name) getUserStillActive = 'selected';
+    else getUserStillActive = '';
+
+    document.querySelector(".users-connected").innerHTML += `
+        <div class="user ${getUserStillActive}" onclick="selectUser(this)">
+            <ion-icon name="person-circle"></ion-icon>
+            <p>${name}</p>
+            <img src="images/check.png" alt="check">
+        </div>
+    `;
+}
+
+// Get All Users Connected 
 function getAllUsersConnected() {
     const promise = axios.get("https://mock-api.driven.com.br/api/v6/uol/participants");
-    let getUserStillActive = '';
 
     promise.then((res) => {
         document.querySelector(".users-connected").innerHTML = "";
 
         for (let i = 0; i < res.data.length; i++) {
-            if (userToSend === res.data[i].name) getUserStillActive = 'selected';
-            else getUserStillActive = '';
-
-            document.querySelector(".users-connected").innerHTML += `
-                <div class="user ${getUserStillActive}" onclick="selectUser(this)">
-                    <ion-icon name="person-circle"></ion-icon>
-                    <p>${res.data[i].name}</p>
-                    <img src="images/check.png" alt="check">
-                </div>
-            `;
+            loadUsers(res.data[i].name);
         }
     });
 }
@@ -191,7 +222,7 @@ function selectUser(user) {
 
     if (user.classList.contains("selected")) {
         userToSend = user.querySelector('p').innerHTML;
-        toUser.innerHTML = `Enviando para ${userToSend} (Público)`;
+        toUser.innerHTML = `Enviando para ${userToSend} (${messageStatus})`;
     }
 }
 
