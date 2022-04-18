@@ -226,7 +226,7 @@ function selectUser(user) {
             document.querySelectorAll('.visibility div').forEach(visible => visible.classList.remove('status'));
         }
         userToSend = user.querySelector('p').innerHTML;
-        toUser.innerHTML = `Enviando para ${userToSend} (${messageStatus})`;
+        toUser.innerHTML = `Enviando para <span>${userToSend}</span> (${messageStatus})`;
     }
 }
 
@@ -240,7 +240,7 @@ function selectVisibility(visible) {
 
     if (visible.classList.contains("status")) {
         messageStatus = visible.querySelector('h3').innerHTML;
-        toUser.innerHTML = `Enviando para ${userToSend} (${messageStatus})`;
+        toUser.innerHTML = `Enviando para <span>${userToSend}</span> (${messageStatus})`;
     }
 }
 
