@@ -221,6 +221,10 @@ function selectUser(user) {
     user.classList.add("selected");
 
     if (user.classList.contains("selected")) {
+        if(user.querySelector('p').innerHTML === "Todos") {
+            messageStatus = "Público";
+            document.querySelectorAll('.visibility div').forEach(visible => visible.classList.remove('status'));
+        }
         userToSend = user.querySelector('p').innerHTML;
         toUser.innerHTML = `Enviando para ${userToSend} (${messageStatus})`;
     }
